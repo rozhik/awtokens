@@ -1,0 +1,6 @@
+dist/test/
+src/
+test/
+tsconfig.json
+README.md
+.vscode

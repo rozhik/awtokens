@@ -1,11 +1,10 @@
 {
   "name": "awtokens",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "description": "AW tokenizer",
   "config": {},
-  "private": true,
   "engines": {
     "node": "^8.11.3"
   },
@@ -14,8 +13,6 @@
     "compile": "tsc",
     "lint": "eslint src/**/*.ts test/**/*.test.ts",
     "test": "NODE_ENV=test nyc mocha",
-    "t": "mocha --bail --recursive --compilers ts:ts-node/register,tsx:ts-node/register test/",
-    "install": "npm run build",
     "watch-test": "nodemon --exec \"npm test\" --watch src --watch package.json"
   },
   "dependencies": {},

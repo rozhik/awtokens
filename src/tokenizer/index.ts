@@ -1,3 +1,7 @@
+/* eslint-disable import/named */
+import { Dict, IToken } from "./types";
+
+export { Dict, IToken };
 interface IRegexpItem {
   reg?: RegExp;
   tokenType?: string;
@@ -5,17 +9,6 @@ interface IRegexpItem {
   concatPrev?: boolean;
 }
 
-type Dict = { [key: string]: string };
-
-export interface IToken {
-  text: string;
-  pre?: string;
-  post?: string;
-  tags?: string[];
-  val?: Dict;
-  tScore?: number;
-  pos?: number;
-}
 export const nullToken: IToken = { text: "" };
 
 type ExtendedTokenizerCallback = (

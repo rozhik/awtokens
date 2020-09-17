@@ -56,13 +56,26 @@ export async function tokenize(
         return ret;
       })
     );
-    const bestReg = regMatches[0] || null;
-
     const callbackMatches = matchFilterSort(
       await Promise.all(callbacks.map((cb) => cb(chunk, regMatches, prev)))
     );
-    const bestCallback = callbackMatches[0] || null;
-    return bestCallback || bestReg || { text: chunk.substring(0, 1) };
+
+    const allMatches = matchFilterSort([...regMatches, ...callbackMatches]);
+
+    const best =
+      allMatches.length > 0 ? allMatches[0] : { text: chunk.substring(0, 1) };
+
+    const tags = allMatches.reduce((acc: string[], tok: IToken): string[] => {
+      if (best.text === tok.text && tok.tags) {
+        return [...acc, ...(tok.tags || [])];
+      }
+      return acc;
+    }, []);
+    best.tags = tags;
+    return {
+      ...best,
+      tags,
+    };
   };
 
   const process = async (): Promise<void> => {

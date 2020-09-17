@@ -97,7 +97,7 @@ describe("Tokenizer core", () => {
           // eslint-disable-next-line no-plusplus
           callCounter++;
           if (chunk.split(" ")[0] === "10st") {
-            return { text: "10st" };
+            return { text: "10st", tScore: 3.9 };
           }
           return nullToken;
         });
@@ -158,6 +158,18 @@ describe("Tokenizer core", () => {
         ["comments", "ALPHA"],
         ["0xf5", "HEX"],
       ]);
+    });
+
+    it("Correctly set multiple tags for tokens", async () => {
+      const res = await tokenize("0xf5", (addRegexp) => {
+        addRegexp(/^0x[0-9a-fA-F]+/, { tokenType: "HEX", priority: 0.9 });
+        addRegexp(/^[0-9]+/, { tokenType: "NUM", priority: 0.8 });
+        addRegexp(/^[a-zA-Z]+/, { tokenType: "ALPHA", priority: 0.3 });
+        addRegexp(/^[a-zA-Z0-9]+/, { tokenType: "ALPHA_NUM", priority: 0.1 });
+      });
+      expect(res.length).be.equal(1);
+      const ordered = res[0].tags && res[0].tags.join(",");
+      expect(ordered).be.equal("HEX,ALPHA_NUM");
     });
   });
 });

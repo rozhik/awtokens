@@ -1,3 +1,5 @@
-export function a(): string {
-  return "a";
-}
+export { IToken, tokenize, nullToken } from "./tokenizer";
+
+export function a() {
+    return true;
+};

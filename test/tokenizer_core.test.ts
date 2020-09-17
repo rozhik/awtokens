@@ -160,6 +160,28 @@ describe("Tokenizer core", () => {
       ]);
     });
 
+    it("Correctly tags spacse for tokens", async () => {
+      const res = await tokenize(
+        " space n\n nr\n\r rn\r\n r\r",
+        (addRegexp) => {
+          addRegexp(/^[a-zA-Z]+/, { tokenType: "ALPHA", priority: 0.3 });
+          addRegexp(/^\r?\n/, { tokenType: "PARA", priority: 0 });
+        }
+      );
+      expect(tokenInfoToTokenTagPair(res)).be.deep.equal([
+        ["space", "ALPHA"],
+        ["n", "ALPHA"],
+        ["\n", "PARA"],
+        ["nr", "ALPHA"],
+        ["\n", "PARA"],
+        ["\r", ""],
+        ["rn", "ALPHA"],
+        ["\r\n", "PARA"],
+        ["r", "ALPHA"],
+        ["\r", ""],
+      ]);
+    });
+
     it("Correctly set multiple tags for tokens", async () => {
       const res = await tokenize("0xf5", (addRegexp) => {
         addRegexp(/^0x[0-9a-fA-F]+/, { tokenType: "HEX", priority: 0.9 });

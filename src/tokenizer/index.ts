@@ -5,11 +5,14 @@ interface IRegexpItem {
   concatPrev?: boolean;
 }
 
+type Dict = { [key: string]: string };
+
 export interface IToken {
   text: string;
   pre?: string;
   post?: string;
   tags?: string[];
+  val?: Dict;
   tScore?: number;
   pos?: number;
 }
@@ -71,10 +74,19 @@ export async function tokenize(
       }
       return acc;
     }, []);
+
+    const val = allMatches.reduce(
+      (acc: Dict, tok: IToken): Dict => ({
+        ...(acc || {}),
+        ...(tok.val || {}),
+      }),
+      {}
+    );
     best.tags = tags;
     return {
       ...best,
       tags,
+      val,
     };
   };
 
@@ -84,7 +96,7 @@ export async function tokenize(
     let token = nullToken;
 
     const peekSpace = (str: string): string => {
-      const res = str.match(/^(\s+)/);
+      const res = str.match(/^([\t ]+)/);
       return res === null ? "" : res[1];
     };
 
@@ -92,9 +104,9 @@ export async function tokenize(
       const len = str.length;
       if (text.substring(pos, pos + len) !== str) {
         throw new Error(
-          `Try to skip wrong chars ${JSON.stringify(str)} on ${JSON.stringify(
-            chunk
-          )}`
+          `Try to skip wrong chars ${JSON.stringify(str)} vs ${JSON.stringify(
+            text.substring(pos, pos + len)
+          )} on ${JSON.stringify(text)} pos: ${pos}`
         );
       }
       pos += len;

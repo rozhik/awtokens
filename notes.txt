@@ -1,0 +1,16 @@
+
+pointer: 'email',
+select: [{tag:email}]
+
+pointer: 'date',
+select: [{tag:date}]
+
+pointer: 'pieces': {
+    type: array,
+    required: width,
+    level: 2
+
+    pointer: 'width:
+    select: w, required; transform: to int
+
+}

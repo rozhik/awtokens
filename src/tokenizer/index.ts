@@ -1,26 +1,15 @@
 /* eslint-disable import/named */
-import { Dict, IToken } from "./types";
+import {
+  Dict,
+  IToken,
+  IRegexpItem,
+  TokenizerCallback,
+  TokenizerInit,
+} from "./types";
 
 export { Dict, IToken };
-interface IRegexpItem {
-  reg?: RegExp;
-  tokenType?: string;
-  priority?: number;
-  concatPrev?: boolean;
-}
 
 export const nullToken: IToken = { text: "" };
-
-type ExtendedTokenizerCallback = (
-  str: string,
-  guessList: IToken[],
-  prevToken: IToken
-) => Promise<IToken>;
-export type TokenizerCallback = ExtendedTokenizerCallback;
-
-type AddRegexp = (reg: RegExp, opts?: IRegexpItem) => void;
-type AddCallback = (callback: TokenizerCallback) => void;
-type TokenizerInit = (addRegexp: AddRegexp, addCallback: AddCallback) => void;
 
 export async function tokenize(
   text: string,

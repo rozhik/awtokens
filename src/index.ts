@@ -1,5 +1,19 @@
-export { IToken, tokenize, nullToken } from "./tokenizer";
+/* eslint-disable import/named */
+export { Dict, IToken, tokenize, nullToken } from "./tokenizer";
 
-export function a() {
-    return true;
-};
+export {
+  charTypeCallbacks,
+  standardCallbacks,
+  dataCallbacks,
+  urlsCallbacks,
+} from "./tokenizer/presets";
+
+export {
+  applyRules,
+  isMatch,
+  TAG,
+  TEXT,
+  IRoleAtom,
+  IRule,
+  IRuleMatch,
+} from "./matcher";

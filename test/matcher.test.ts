@@ -6,7 +6,7 @@ import { isMatch } from "../src/matcher";
 
 const toText = (list: IToken[]): string[] => list.map((item) => item.text);
 
-describe.only("src/matcher", () => {
+describe("src/matcher", () => {
   const simple = "Simple 10st string email@dot.com";
   describe("isMatch", () => {
     it("Anything match empty pattern", () => {

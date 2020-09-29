@@ -26,12 +26,10 @@ describe("src/matcher Complex", () => {
                 min: 1,
                 max: 1,
                 patterns: [
-                  [
-                    {
-                      type: TAG,
-                      val: "EMAIL",
-                    },
-                  ],
+                  {
+                    type: TAG,
+                    anyOfVal: ["EMAIL"],
+                  },
                 ],
                 actions: [
                   {
@@ -59,7 +57,6 @@ describe("src/matcher Complex", () => {
       ]);
     });
 
-
     it("Simple rule at middle", () => {
       expect(
         applyRules(simpleExTokenized, [
@@ -71,12 +68,10 @@ describe("src/matcher Complex", () => {
                 min: 1,
                 max: 1,
                 patterns: [
-                  [
-                    {
-                      type: TAG,
-                      val: "EMAIL",
-                    },
-                  ],
+                  {
+                    type: TAG,
+                    anyOfVal: ["EMAIL"],
+                  },
                 ],
                 actions: [
                   {
@@ -115,12 +110,10 @@ describe("src/matcher Complex", () => {
                 min: 1,
                 max: 1,
                 patterns: [
-                  [
-                    {
-                      type: TEXT,
-                      val: "string",
-                    },
-                  ],
+                  {
+                    type: TEXT,
+                    anyOfVal: ["string"],
+                  },
                 ],
                 actions: [],
               },
@@ -128,12 +121,10 @@ describe("src/matcher Complex", () => {
                 min: 1,
                 max: 1,
                 patterns: [
-                  [
-                    {
-                      type: TAG,
-                      val: "EMAIL",
-                    },
-                  ],
+                  {
+                    type: TAG,
+                    anyOfVal: ["EMAIL"],
+                  },
                 ],
                 actions: [
                   {
@@ -164,8 +155,5 @@ describe("src/matcher Complex", () => {
         },
       ]);
     });
-
-
-
   });
 });

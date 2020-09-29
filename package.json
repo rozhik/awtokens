@@ -1,14 +1,13 @@
 {
   "name": "awtokens",
-  "version": "0.0.7",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "version": "0.0.9",
+  "main": "build/src/index.js",
+  "types": "build/src/index.d.ts",
   "description": "AW tokenizer",
   "config": {},
   "engines": {
     "node": "^8.11.3"
   },
-  "rootDir": "./build/src/",
   "scripts": {
     "clean": "rm -rf ./dist && rm -rf ./test/js",
     "compile": "tsc",

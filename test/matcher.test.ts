@@ -1,6 +1,5 @@
 import { expect } from "chai";
 // eslint-disable-next-line import/named
-import { type } from "os";
 import { IToken, tokenize, nullToken } from "../src/tokenizer/index";
 import { isMatch } from "../src/matcher";
 
@@ -31,12 +30,10 @@ describe("src/matcher", () => {
             min: 1,
             max: 1,
             patterns: [
-              [
-                {
-                  type: "text",
-                  val: "anything",
-                },
-              ],
+              {
+                type: "text",
+                anyOfVal: ["anything"],
+              },
             ],
             actions: [],
           }
@@ -52,13 +49,11 @@ describe("src/matcher", () => {
             min: 1,
             max: 1,
             patterns: [
-              [
-                {
-                  type: "text",
-                  val: "anything",
-                  invert: true,
-                },
-              ],
+              {
+                type: "text",
+                anyOfVal: ["anything"],
+                invert: true,
+              },
             ],
             actions: [],
           }
@@ -74,12 +69,10 @@ describe("src/matcher", () => {
             min: 1,
             max: 1,
             patterns: [
-              [
-                {
-                  type: "tag",
-                  val: "TAG1",
-                },
-              ],
+              {
+                type: "tag",
+                anyOfVal: ["TAG1"],
+              },
             ],
             actions: [],
           }
@@ -95,13 +88,11 @@ describe("src/matcher", () => {
             min: 1,
             max: 1,
             patterns: [
-              [
-                {
-                  type: "tag",
-                  val: "TAG1",
-                  invert: true,
-                },
-              ],
+              {
+                type: "tag",
+                anyOfVal: ["TAG1"],
+                invert: true,
+              },
             ],
             actions: [],
           }
@@ -117,12 +108,10 @@ describe("src/matcher", () => {
             min: 1,
             max: 1,
             patterns: [
-              [
-                {
-                  type: "tag",
-                  val: "NOT_EXISTS",
-                },
-              ],
+              {
+                type: "tag",
+                anyOfVal: ["NOT_EXISTS"],
+              },
             ],
             actions: [],
           }
@@ -138,13 +127,11 @@ describe("src/matcher", () => {
             min: 1,
             max: 1,
             patterns: [
-              [
-                {
-                  type: "tag",
-                  val: "NOT_EXISTS",
-                  invert: true,
-                },
-              ],
+              {
+                type: "tag",
+                anyOfVal: ["NOT_EXISTS"],
+                invert: true,
+              },
             ],
             actions: [],
           }
@@ -160,16 +147,10 @@ describe("src/matcher", () => {
             min: 1,
             max: 1,
             patterns: [
-              [
-                {
-                  type: "tag",
-                  val: "NOT_EXISTS",
-                },
-                {
-                  type: "text",
-                  val: "anything",
-                },
-              ],
+              {
+                type: "tag",
+                anyOfVal: ["NOT_EXISTS", "TAG1"],
+              },
             ],
             actions: [],
           }
@@ -185,18 +166,14 @@ describe("src/matcher", () => {
             min: 1,
             max: 1,
             patterns: [
-              [
-                {
-                  type: "tag",
-                  val: "TAG1",
-                },
-              ],
-              [
-                {
-                  type: "text",
-                  val: "anything",
-                },
-              ],
+              {
+                type: "tag",
+                anyOfVal: ["TAG1"],
+              },
+              {
+                type: "text",
+                anyOfVal: ["anything"],
+              },
             ],
             actions: [],
           }

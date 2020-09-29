@@ -1,6 +1,7 @@
 export type Dict = { [key: string]: string };
 
 export interface IToken {
+  id?: string; // Optional not handled by this lib
   text: string;
   pre?: string;
   post?: string;
@@ -40,7 +41,7 @@ export const TEXT = "text";
 
 export interface IRulePattern {
   type: typeof TAG | typeof TEXT;
-  val: string;
+  anyOfVal: string[];
   invert?: boolean;
 }
 export interface IRuleAction {
@@ -53,7 +54,7 @@ export interface IRoleAtom {
   min: number;
   max: number;
   // greedy: boolean;
-  patterns: IRulePattern[][];
+  patterns: IRulePattern[];
   actions: IRuleAction[];
 }
 

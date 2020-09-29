@@ -1,3 +1,4 @@
+import { pathToFileURL } from "url";
 /* eslint-disable import/named */
 import {
   IToken,
@@ -14,22 +15,22 @@ export function isMatch(token: IToken, atom: IRoleAtom): boolean {
   const tags = token.tags || [];
   for (let i = 0; i < atom.patterns.length; i += 1) {
     // AND
-    const andPatterns = atom.patterns[i];
+    const patt = atom.patterns[i];
     let anyOk = false;
-    for (let j = 0; !anyOk && j < andPatterns.length; j += 1) {
-      // OR
-      const patt = andPatterns[j];
-      const psevdoTrue = !patt.invert;
-      switch (patt.type) {
-        case TAG:
-          anyOk = tags.indexOf(patt.val) >= 0 ? psevdoTrue : !psevdoTrue;
-          break;
-        case TEXT:
-          anyOk = token.text === patt.val ? psevdoTrue : !psevdoTrue;
-          break;
-        default:
-          throw new Error(`Unknown pattern type ${patt.type}`);
-      }
+    const psevdoTrue = !patt.invert;
+    switch (patt.type) {
+      case TAG:
+        anyOk = patt.anyOfVal.some((val) => tags.indexOf(val) >= 0)
+          ? psevdoTrue
+          : !psevdoTrue;
+        break;
+      case TEXT:
+        anyOk = patt.anyOfVal.some((val) => token.text === val)
+          ? psevdoTrue
+          : !psevdoTrue;
+        break;
+      default:
+        throw new Error(`Unknown pattern type ${patt.type}`);
     }
     if (!anyOk) {
       // No one rule matched

@@ -7,37 +7,51 @@ import {
   IRoleAtom,
   IRule,
   IRuleMatch,
+  IMatchItem,
 } from "../tokenizer/types";
+
+export const amplifiers = {
+  exactMatch: 5,
+  tagMatch: 1,
+  tokenMatch: 10,
+};
 
 export { IToken, TAG, TEXT, IRoleAtom, IRule, IRuleMatch };
 
-export function isMatch(token: IToken, atom: IRoleAtom): boolean {
+export function getMatchCnt(token: IToken, atom: IRoleAtom): number {
   const tags = token.tags || [];
+  let priority = amplifiers.tokenMatch;
   for (let i = 0; i < atom.patterns.length; i += 1) {
     // AND
     const patt = atom.patterns[i];
+    let partPriority = 0;
     let anyOk = false;
     const psevdoTrue = !patt.invert;
     switch (patt.type) {
       case TAG:
-        anyOk = patt.anyOfVal.some((val) => tags.indexOf(val) >= 0)
-          ? psevdoTrue
-          : !psevdoTrue;
+        partPriority =
+          patt.anyOfVal.filter((val) => tags.indexOf(val) >= 0).length *
+          amplifiers.tagMatch;
         break;
       case TEXT:
-        anyOk = patt.anyOfVal.some((val) => token.text === val)
-          ? psevdoTrue
-          : !psevdoTrue;
+        partPriority =
+          patt.anyOfVal.filter((val) => token.text === val).length *
+          amplifiers.exactMatch;
         break;
       default:
         throw new Error(`Unknown pattern type ${patt.type}`);
     }
+    anyOk = partPriority ? psevdoTrue : !psevdoTrue;
     if (!anyOk) {
       // No one rule matched
-      return false;
+      return 0;
     }
+    priority += partPriority;
   }
-  return true;
+  return priority;
+}
+export function isMatch(token: IToken, atom: IRoleAtom): boolean {
+  return getMatchCnt(token, atom) !== 0;
 }
 
 export function applyRule(tokens: IToken[], rule: IRule): IRuleMatch[] {
@@ -49,6 +63,7 @@ export function applyRule(tokens: IToken[], rule: IRule): IRuleMatch[] {
   let i = 0;
   let curCount = 0;
   let maxIterations = 0;
+  let priority = 0;
 
   const result: IRuleMatch[] = [];
 
@@ -84,6 +99,7 @@ export function applyRule(tokens: IToken[], rule: IRule): IRuleMatch[] {
     textP = pos;
     textPeekP = pos;
     ruleP = 0;
+    priority = 0;
     maxIterations = 100;
   };
 
@@ -104,11 +120,14 @@ export function applyRule(tokens: IToken[], rule: IRule): IRuleMatch[] {
     };
     while (maxIterations > 0 && haveMorePatterns()) {
       maxIterations -= 1;
-      if (isMatch(getToken(), getPattern())) {
-        curRule.list.push({
-          textPos: textP,
-          rulePos: ruleP,
-        });
+      const matchItem: IMatchItem = {
+        textPos: textP,
+        rulePos: ruleP,
+        mp: getMatchCnt(getToken(), getPattern()),
+      };
+      priority += matchItem.mp;
+      if (matchItem.mp) {
+        curRule.list.push(matchItem);
         nextToken();
         nextPattern();
       } else if (getPattern().min === 0) {
@@ -123,6 +142,7 @@ export function applyRule(tokens: IToken[], rule: IRule): IRuleMatch[] {
       }
     }
     if (!isRuleFailed()) {
+      curRule.priority = (rule.priority || 0) + priority;
       result.push(curRule);
     }
   }

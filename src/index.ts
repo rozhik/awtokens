@@ -17,3 +17,11 @@ export {
   IRule,
   IRuleMatch,
 } from "./matcher";
+
+export {
+  findBest,
+  findTagsRegions,
+  rulesToContext,
+  BestValue,
+  TagsMatch,
+} from "./extractor";

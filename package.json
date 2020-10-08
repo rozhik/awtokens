@@ -1,8 +1,8 @@
 {
   "name": "awtokens",
-  "version": "0.0.9",
-  "main": "build/src/index.js",
-  "types": "build/src/index.d.ts",
+  "version": "0.1.0",
+  "main": "core/src/index.js",
+  "types": "core/src/index.d.ts",
   "description": "AW tokenizer",
   "config": {},
   "engines": {

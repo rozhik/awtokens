@@ -1,7 +1,7 @@
 import { expect } from "chai";
 // eslint-disable-next-line import/named
 import { tokenize } from "../src/tokenizer/index";
-import { applyRules, IRuleMatch } from "../src/matcher";
+import { applyRules, IRuleMatch, amplifiers } from "../src/matcher";
 import { standardCallbacks } from "../src/tokenizer/presets";
 import { TAG, IToken, TEXT } from "../src/tokenizer/types";
 
@@ -47,11 +47,16 @@ describe("src/matcher Complex", () => {
             {
               rulePos: 0,
               textPos: 4,
+              mp: amplifiers.tokenMatch + amplifiers.tagMatch,
             },
           ],
           matchEnd: 0,
           matchStart: 4,
-          priority: 0,
+          priority:
+            100 +
+            amplifiers.tokenMatch * 1 +
+            amplifiers.tagMatch * 1 +
+            amplifiers.exactMatch * 0,
           ruleId: "simple",
         },
       ]);
@@ -89,11 +94,16 @@ describe("src/matcher Complex", () => {
             {
               rulePos: 0,
               textPos: 4,
+              mp: amplifiers.tokenMatch + amplifiers.tagMatch,
             },
           ],
           matchEnd: 0,
           matchStart: 4,
-          priority: 0,
+          priority:
+            100 +
+            amplifiers.tokenMatch * 1 +
+            amplifiers.tagMatch * 1 +
+            amplifiers.exactMatch * 0,
           ruleId: "simple",
         },
       ]);
@@ -142,15 +152,21 @@ describe("src/matcher Complex", () => {
             {
               rulePos: 0,
               textPos: 3,
+              mp: amplifiers.tokenMatch + amplifiers.exactMatch,
             },
             {
               rulePos: 1,
               textPos: 4,
+              mp: amplifiers.tokenMatch + amplifiers.tagMatch,
             },
           ],
           matchEnd: 0,
           matchStart: 3,
-          priority: 0,
+          priority:
+            100 +
+            amplifiers.tokenMatch * 2 +
+            amplifiers.tagMatch * 1 +
+            amplifiers.exactMatch * 1,
           ruleId: "simple2",
         },
       ]);

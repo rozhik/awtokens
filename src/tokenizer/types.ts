@@ -67,6 +67,7 @@ export interface IRule {
 export interface IMatchItem {
   textPos: number;
   rulePos: number;
+  mp: number; // Matched patterns count
 }
 
 export interface IRuleMatch {

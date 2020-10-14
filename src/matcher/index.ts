@@ -8,10 +8,12 @@ import {
   IRule,
   IRuleMatch,
   IMatchItem,
+  TEXT_CASE_INSENSITIVE,
 } from "../tokenizer/types";
 
 export const amplifiers = {
   exactMatch: 5,
+  caseMatch: 3,
   tagMatch: 1,
   tokenMatch: 10,
 };
@@ -20,6 +22,7 @@ export { IToken, TAG, TEXT, IRoleAtom, IRule, IRuleMatch };
 
 export function getMatchCnt(token: IToken, atom: IRoleAtom): number {
   const tags = token.tags || [];
+  const itext = (token.text || "").toLowerCase();
   let priority = amplifiers.tokenMatch;
   for (let i = 0; i < atom.patterns.length; i += 1) {
     // AND
@@ -37,6 +40,12 @@ export function getMatchCnt(token: IToken, atom: IRoleAtom): number {
         partPriority =
           patt.anyOfVal.filter((val) => token.text === val).length *
           amplifiers.exactMatch;
+        break;
+      case TEXT_CASE_INSENSITIVE:
+        partPriority =
+          patt.anyOfVal.filter((val) => itext === val).length *
+          amplifiers.caseMatch;
+        break;
         break;
       default:
         throw new Error(`Unknown pattern type ${patt.type}`);
@@ -66,6 +75,9 @@ export function applyRule(tokens: IToken[], rule: IRule): IRuleMatch[] {
   let priority = 0;
 
   const result: IRuleMatch[] = [];
+  if (rule.disabled) {
+    return result;
+  }
 
   const getToken = () => {
     return text[textPeekP];

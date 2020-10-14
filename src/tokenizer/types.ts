@@ -37,10 +37,11 @@ export type TokenizerInit = (
 // Matcher types
 export const TAG = "tag";
 export const TEXT = "text";
+export const TEXT_CASE_INSENSITIVE = "text_i_case";
 // Do wee need to ckeck apace before/after or datasource
 
 export interface IRulePattern {
-  type: typeof TAG | typeof TEXT;
+  type: typeof TAG | typeof TEXT | typeof TEXT_CASE_INSENSITIVE;
   anyOfVal: string[];
   invert?: boolean;
 }
@@ -60,6 +61,7 @@ export interface IRoleAtom {
 
 export interface IRule {
   id: string;
+  disabled?: boolean;
   priority: number;
   atoms: IRoleAtom[];
 }

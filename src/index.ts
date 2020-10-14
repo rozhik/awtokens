@@ -20,6 +20,7 @@ export {
 
 export {
   findBest,
+  findBestSeq,
   findTagsRegions,
   rulesToContext,
   BestValue,

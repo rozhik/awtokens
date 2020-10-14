@@ -182,6 +182,31 @@ const rules: IRule[] = [
       },
     ],
   },
+
+  {
+    id: "BAD_rule",
+    priority: 0,
+    atoms: [
+      {
+        min: 1,
+        max: 1,
+        patterns: [{ type: "tag", anyOfVal: ["NUM"] }],
+        actions: [{ type: "tag", val: "BAD" }],
+      },
+      {
+        min: 1,
+        max: 1,
+        patterns: [{ type: "text", anyOfVal: ["x"] }],
+        actions: [{ type: "tag", val: "BAD" }],
+      },
+      {
+        min: 1,
+        max: 1,
+        patterns: [{ type: "tag", anyOfVal: ["NUM"] }],
+        actions: [{ type: "tag", val: "BAD" }],
+      },
+    ],
+  },
 ];
 
 function tokensToObject(tokens: IToken[], myRules: IRule[]): Object {

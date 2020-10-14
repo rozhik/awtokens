@@ -20,7 +20,7 @@ export type TagsMatch = {
   // values:
 };
 
-type RangeContext = {
+export type RangeContext = {
   range: Range;
   tokens: IToken[];
   rules: IRule[];
@@ -60,7 +60,7 @@ export const rulesToContext = (
   });
   const tagsMatch: TagsMatch[] = tokens.map((tok, idx) => {
     const all = (tMatch[idx] || []).sort((a, b) =>
-      a.priority > b.priority ? 1 : -1
+      a.priority < b.priority ? 1 : -1
     );
     const res: TagsMatch = {
       all,
@@ -165,5 +165,34 @@ export const findBest = (
   ret.tagIdx = bestTagIdx;
   ret.val = token.text;
   ret.dict = token.val && token.val[tag];
+  return ret;
+};
+
+export const findBestSeq = (
+  { matches, range, tokens }: RangeContext,
+  tag: string
+): BestValue[] => {
+  const ret: BestValue[] = [];
+  let maxPrio = -100;
+  let bestTagIdx = -1;
+  for (let i = range.start; i < range.end; i += 1) {
+    if (matches[i]?.setTag === tag && matches[i]?.all[0].priority > maxPrio) {
+      maxPrio = matches[i]?.all[0].priority;
+      bestTagIdx = i;
+    }
+  }
+  if (bestTagIdx < 0) return ret;
+  for (let i = bestTagIdx; i < range.end; i += 1) {
+    const token = tokens[i];
+    if (matches[i]?.setTag === tag) {
+      ret.push({
+        tagIdx: i,
+        val: token.text,
+        dict: token.val && token.val[tag],
+      });
+    } else {
+      return ret;
+    }
+  }
   return ret;
 };

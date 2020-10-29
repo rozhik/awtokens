@@ -52,14 +52,15 @@ export interface IRuleAction {
 }
 
 export interface IRoleAtom {
-  min: number;
-  max: number;
+  min?: number;
+  max?: number;
   // greedy: boolean;
   patterns: IRulePattern[];
   actions: IRuleAction[];
 }
 
 export interface IRule {
+  idx?: number;
   id: string;
   disabled?: boolean;
   priority: number;

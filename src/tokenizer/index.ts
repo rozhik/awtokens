@@ -78,7 +78,9 @@ export async function tokenize(
     let token = nullToken;
 
     const peekSpace = (str: string): string => {
-      const res = str.match(/^([\t ]+)/);
+      const res = str.match(
+        /^([\t \u00a0\u1680\u180e\u2000-\u200a\u202f\u205f\u3000]+)/
+      );
       return res === null ? "" : res[1];
     };
 

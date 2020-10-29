@@ -1,3 +1,4 @@
+/* eslint-disable import/named */
 /* eslint-disable import/prefer-default-export */
 
 import { IRule, IToken } from "../tokenizer/types";
@@ -20,11 +21,14 @@ export type TagsMatch = {
   // values:
 };
 
+type Stat = { [pos: number]: string };
+
 export type RangeContext = {
   range: Range;
   tokens: IToken[];
   rules: IRule[];
   matches: TagsMatch[];
+  stat: Stat;
 };
 
 export const rulesToContext = (
@@ -79,6 +83,7 @@ export const rulesToContext = (
     range: { start: 0, end: tokens.length },
     rules,
     tokens,
+    stat: {},
   };
 };
 
@@ -147,8 +152,9 @@ export type BestValue = {
 };
 
 export const findBest = (
-  { matches, range, tokens }: RangeContext,
-  tag: string
+  { matches, range, tokens, ...rest }: RangeContext,
+  tag: string,
+  jsonp: string
 ): BestValue => {
   const ret: BestValue = {};
   let maxPrio = -100;
@@ -165,12 +171,15 @@ export const findBest = (
   ret.tagIdx = bestTagIdx;
   ret.val = token.text;
   ret.dict = token.val && token.val[tag];
+  // eslint-disable-next-line no-param-reassign
+  rest.stat[bestTagIdx] = jsonp;
   return ret;
 };
 
 export const findBestSeq = (
-  { matches, range, tokens }: RangeContext,
-  tag: string
+  { matches, range, tokens, ...rest }: RangeContext,
+  tag: string,
+  jsonp: string
 ): BestValue[] => {
   const ret: BestValue[] = [];
   let maxPrio = -100;
@@ -190,6 +199,8 @@ export const findBestSeq = (
         val: token.text,
         dict: token.val && token.val[tag],
       });
+      // eslint-disable-next-line no-param-reassign
+      rest.stat[i] = jsonp;
     } else {
       return ret;
     }

@@ -46,8 +46,6 @@ describe("src/matcher", () => {
         isMatch(
           { text: "anything" },
           {
-            min: 1,
-            max: 1,
             patterns: [
               {
                 type: "text",
@@ -85,8 +83,6 @@ describe("src/matcher", () => {
         isMatch(
           { text: "anything", tags: ["TAG1"] },
           {
-            min: 1,
-            max: 1,
             patterns: [
               {
                 type: "tag",
@@ -124,8 +120,6 @@ describe("src/matcher", () => {
         isMatch(
           { text: "anything", tags: ["TAG1"] },
           {
-            min: 1,
-            max: 1,
             patterns: [
               {
                 type: "tag",
@@ -144,8 +138,6 @@ describe("src/matcher", () => {
         isMatch(
           { text: "anything", tags: ["TAG1"] },
           {
-            min: 1,
-            max: 1,
             patterns: [
               {
                 type: "tag",
@@ -179,10 +171,6 @@ describe("src/matcher", () => {
           }
         )
       ).be.equal(true);
-    });
-
-    it("T", () => {
-      expect(1).be.equal(1);
     });
   });
 });

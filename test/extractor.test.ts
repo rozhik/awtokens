@@ -214,23 +214,43 @@ function tokensToObject(tokens: IToken[], myRules: IRule[]): Object {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const ret: any = range
     ? {
-        origin_iata: findBest(range, "FROM-IATA").val,
-        dest_iata: findBest(range, "TO-IATA").val,
-        awb_id: findBest(range, "SET-AWB").val,
+        origin_iata: findBest(range, "FROM-IATA", "/origin_iata").val,
+        dest_iata: findBest(range, "TO-IATA", "/dest_iata").val,
+        awb_id: findBest(range, "SET-AWB", "/awb_id").val,
         pieces: findTagsRegions(range, ["P-L", "P-W", "P-H", "P-CNT"])
-          .map((region) => {
+          .map((region, idx) => {
             return {
-              qty: parseInt(findBest(region, "P-CNT").val || "", 10) || 1,
-              leng: parseInt(findBest(region, "P-L").val || "", 10) || 1,
-              width: parseInt(findBest(region, "P-W").val || "", 10) || 1,
-              height: parseInt(findBest(region, "P-H").val || "", 10) || 1,
-              weight: parseInt(findBest(region, "P-MASS").val || "", 10) || 1,
+              qty:
+                parseInt(
+                  findBest(region, "P-CNT", `/pieces/${idx}/qty`).val || "",
+                  10
+                ) || 1,
+              leng:
+                parseInt(
+                  findBest(region, "P-L", `/pieces/${idx}/leng`).val || "",
+                  10
+                ) || 1,
+              width:
+                parseInt(
+                  findBest(region, "P-W", `/pieces/${idx}/width`).val || "",
+                  10
+                ) || 1,
+              height:
+                parseInt(
+                  findBest(region, "P-H", `/pieces/${idx}/height`).val || "",
+                  10
+                ) || 1,
+              weight:
+                parseInt(
+                  findBest(region, "P-MASS", `/pieces/${idx}/weight`).val || "",
+                  10
+                ) || 1,
             };
           })
           .filter((a: any) => a.leng && a.width && a.height),
       }
     : {};
-  return ret;
+  return { data: ret, stat: range?.stat };
 }
 
 describe("src/extractor", () => {
@@ -259,14 +279,34 @@ describe("src/extractor", () => {
       // const matches: IRuleMatch[] = applyRules(tokens, rules);
       const obj = tokensToObject(tokens, rules);
       expect(obj).be.deep.equal({
-        origin_iata: "MEL",
-        dest_iata: "KUL",
-        awb_id: "232-45429366",
-        pieces: [
-          { qty: 1, leng: 36, width: 25, height: 28, weight: 2 },
-          { qty: 2, leng: 51, width: 39, height: 28, weight: 11 },
-          { qty: 1, leng: 52, width: 35, height: 34, weight: 5 },
-        ],
+        data: {
+          origin_iata: "MEL",
+          dest_iata: "KUL",
+          awb_id: "232-45429366",
+          pieces: [
+            { qty: 1, leng: 36, width: 25, height: 28, weight: 2 },
+            { qty: 2, leng: 51, width: 39, height: 28, weight: 11 },
+            { qty: 1, leng: 52, width: 35, height: 34, weight: 5 },
+          ],
+        },
+        stat: {
+          "7": "/origin_iata",
+          "9": "/dest_iata",
+          "11": "/awb_id",
+          "13": "/pieces/0/leng",
+          "15": "/pieces/0/width",
+          "17": "/pieces/0/height",
+          "20": "/pieces/0/weight",
+          "27": "/pieces/1/leng",
+          "29": "/pieces/1/width",
+          "31": "/pieces/1/height",
+          "33": "/pieces/1/weight",
+          "36": "/pieces/1/qty",
+          "38": "/pieces/2/leng",
+          "40": "/pieces/2/width",
+          "42": "/pieces/2/height",
+          "45": "/pieces/2/weight",
+        },
       });
     });
   });

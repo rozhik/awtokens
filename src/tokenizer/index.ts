@@ -32,7 +32,24 @@ export async function tokenize(
         if (!m) {
           return nullToken;
         }
-        const matched = m[0] || "";
+        const matched = m[reg.regPos || 0] || "";
+        if (reg.requiredPrevTag) {
+          if (
+            !prev ||
+            !prev.tags ||
+            (!prev.tags.length &&
+              prev.tags.findIndex((prevTag) => {
+                const idx = reg.requiredPrevTag?.indexOf(prevTag);
+                return idx && idx > 0;
+              }))
+          ) {
+            return nullToken;
+          }
+        }
+        if (reg.regAvoid) {
+          const tail = chunk.substring(matched.length);
+          if (tail.match(reg.regAvoid)) return nullToken;
+        }
         const ret: IToken = {
           text: matched,
           tags: [reg.tokenType || ""],

@@ -13,9 +13,11 @@ export interface IToken {
 
 export interface IRegexpItem {
   reg?: RegExp;
+  regAvoid?: RegExp;
+  regPos?: number;
   tokenType?: string;
   priority?: number;
-  concatPrev?: boolean;
+  requiredPrevTag?: string[];
 }
 
 export const nullToken: IToken = { text: "" };

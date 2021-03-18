@@ -3,17 +3,27 @@ import { expect } from "chai";
 import { IToken, tokenize, nullToken } from "../src/tokenizer/index";
 
 const toText = (list: IToken[]): string[] => list.map((item) => item.text);
+function tokenInfoToTokenTagPair(list: IToken[]): string[][] {
+  return list.map((item) => [item.text, (item.tags && item.tags[0]) || ""]);
+}
+
+function tokenInfoToTokenValTagPair(list: IToken[]): string[][] {
+  return list.map((item) => {
+    const tag = (item.tags && item.tags[0]) || "";
+    return item.val && item.val[tag] ? [item.val[tag], tag] : [item.text, tag];
+  });
+}
 
 describe("Tokenizer core", () => {
   const simple = "Simple 10st string email@dot.com";
   describe("No config", async () => {
     it("Create token for each non-space char", async () => {
-      const res = await tokenize("one 2two", () => {});
+      const res = await tokenize("one 2two", () => { });
 
       expect(toText(res)).be.deep.equal(["o", "n", "e", "2", "t", "w", "o"]);
     });
     it("Create token for each non-space char with leading/trailing spaces", async () => {
-      const res = await tokenize("  one 2two  ", () => {});
+      const res = await tokenize("  one 2two  ", () => { });
 
       expect(toText(res)).be.deep.equal(["o", "n", "e", "2", "t", "w", "o"]);
     });
@@ -117,81 +127,99 @@ describe("Tokenizer core", () => {
       ]);
     });
 
-    /*
-    it("Trows error on invalid callback", async () => {
-      const callCounter = 0;
-      let err = null;
+    describe("Dictionary", async () => {
+      it("Dictionary", async () => {
+        const res = await tokenize(
+          "MON 2 MAR, mon, ",
+          (addRegexp, _, addDict) => {
+            addRegexp(/^[a-z]+/);
+            addRegexp(/^[0-9]+/);
+            addDict("MON", { JAN: "1", FEB: "2", MAR: "3" });
+            addDict("DAY-OF-WEEK", { MON: "1", TUE: "2", WED: "3" });
+          }
+        );
+        expect(tokenInfoToTokenValTagPair(res)).be.deep.equal([
+          ["1", "DAY-OF-WEEK"],
+          ["2", ""],
+          ["3", "MON"],
+          [",", ""],
+          ["mon", ""],
+          [",", ""],
+        ]);
+      });
 
-      expect( tokenize(simple, (_, addCallback) => {
-          addCallback(async (chunk) =>
-            chunk.split(" ")[0] === "10st" ? { text: "11st" } : nullToken
-          );
-      ).to.throw( )
-      expect(callCounter).be.greaterThan(0);
-      expect(err).be.not.null;
+      /*
+      it("Trows error on invalid callback", async () => {
+        const callCounter = 0;
+        let err = null;
+  
+        expect( tokenize(simple, (_, addCallback) => {
+            addCallback(async (chunk) =>
+              chunk.split(" ")[0] === "10st" ? { text: "11st" } : nullToken
+            );
+        ).to.throw( )
+        expect(callCounter).be.greaterThan(0);
+        expect(err).be.not.null;
+      });
+      */
     });
-    */
-  });
 
-  describe("Tocken tagging", async () => {
-    function tokenInfoToTokenTagPair(list: IToken[]): string[][] {
-      return list.map((item) => [item.text, (item.tags && item.tags[0]) || ""]);
-    }
+    describe("Tocken tagging", async () => {
+      it("Correctly set tags for tokens", async () => {
+        const res = await tokenize(
+          "Hi, 10x for 33 comments 0xf5",
+          (addRegexp) => {
+            addRegexp(/^0x[0-9a-fA-F]+/, { tokenType: "HEX", priority: 0.9 });
+            addRegexp(/^[0-9]+/, { tokenType: "NUM", priority: 0.8 });
+            addRegexp(/^[a-zA-Z]+/, { tokenType: "ALPHA", priority: 0.3 });
+            addRegexp(/^[a-zA-Z0-9]+/, { tokenType: "ALPHA_NUM", priority: 0 });
+          }
+        );
 
-    it("Correctly set tags for tokens", async () => {
-      const res = await tokenize(
-        "Hi, 10x for 33 comments 0xf5",
-        (addRegexp) => {
+        expect(tokenInfoToTokenTagPair(res)).be.deep.equal([
+          ["Hi", "ALPHA"],
+          [",", ""],
+          ["10x", "ALPHA_NUM"],
+          ["for", "ALPHA"],
+          ["33", "NUM"],
+          ["comments", "ALPHA"],
+          ["0xf5", "HEX"],
+        ]);
+      });
+
+      it("Correctly tags spacse for tokens", async () => {
+        const res = await tokenize(
+          " space n\n nr\n\r rn\r\n r\r",
+          (addRegexp) => {
+            addRegexp(/^[a-zA-Z]+/, { tokenType: "ALPHA", priority: 0.3 });
+            addRegexp(/^\r?\n/, { tokenType: "PARA", priority: 0 });
+          }
+        );
+        expect(tokenInfoToTokenTagPair(res)).be.deep.equal([
+          ["space", "ALPHA"],
+          ["n", "ALPHA"],
+          ["\n", "PARA"],
+          ["nr", "ALPHA"],
+          ["\n", "PARA"],
+          ["\r", ""],
+          ["rn", "ALPHA"],
+          ["\r\n", "PARA"],
+          ["r", "ALPHA"],
+          ["\r", ""],
+        ]);
+      });
+
+      it("Correctly set multiple tags for tokens", async () => {
+        const res = await tokenize("0xf5", (addRegexp) => {
           addRegexp(/^0x[0-9a-fA-F]+/, { tokenType: "HEX", priority: 0.9 });
           addRegexp(/^[0-9]+/, { tokenType: "NUM", priority: 0.8 });
           addRegexp(/^[a-zA-Z]+/, { tokenType: "ALPHA", priority: 0.3 });
-          addRegexp(/^[a-zA-Z0-9]+/, { tokenType: "ALPHA_NUM", priority: 0 });
-        }
-      );
-
-      expect(tokenInfoToTokenTagPair(res)).be.deep.equal([
-        ["Hi", "ALPHA"],
-        [",", ""],
-        ["10x", "ALPHA_NUM"],
-        ["for", "ALPHA"],
-        ["33", "NUM"],
-        ["comments", "ALPHA"],
-        ["0xf5", "HEX"],
-      ]);
-    });
-
-    it("Correctly tags spacse for tokens", async () => {
-      const res = await tokenize(
-        " space n\n nr\n\r rn\r\n r\r",
-        (addRegexp) => {
-          addRegexp(/^[a-zA-Z]+/, { tokenType: "ALPHA", priority: 0.3 });
-          addRegexp(/^\r?\n/, { tokenType: "PARA", priority: 0 });
-        }
-      );
-      expect(tokenInfoToTokenTagPair(res)).be.deep.equal([
-        ["space", "ALPHA"],
-        ["n", "ALPHA"],
-        ["\n", "PARA"],
-        ["nr", "ALPHA"],
-        ["\n", "PARA"],
-        ["\r", ""],
-        ["rn", "ALPHA"],
-        ["\r\n", "PARA"],
-        ["r", "ALPHA"],
-        ["\r", ""],
-      ]);
-    });
-
-    it("Correctly set multiple tags for tokens", async () => {
-      const res = await tokenize("0xf5", (addRegexp) => {
-        addRegexp(/^0x[0-9a-fA-F]+/, { tokenType: "HEX", priority: 0.9 });
-        addRegexp(/^[0-9]+/, { tokenType: "NUM", priority: 0.8 });
-        addRegexp(/^[a-zA-Z]+/, { tokenType: "ALPHA", priority: 0.3 });
-        addRegexp(/^[a-zA-Z0-9]+/, { tokenType: "ALPHA_NUM", priority: 0.1 });
+          addRegexp(/^[a-zA-Z0-9]+/, { tokenType: "ALPHA_NUM", priority: 0.1 });
+        });
+        expect(res.length).be.equal(1);
+        const ordered = res[0].tags && res[0].tags.join(",");
+        expect(ordered).be.equal("HEX,ALPHA_NUM");
       });
-      expect(res.length).be.equal(1);
-      const ordered = res[0].tags && res[0].tags.join(",");
-      expect(ordered).be.equal("HEX,ALPHA_NUM");
     });
   });
 });

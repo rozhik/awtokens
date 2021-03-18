@@ -4,8 +4,18 @@
     "module": "commonjs",
     "declaration": true,
     "outDir": "./core",
-    "strict": true
+    "strict": true,
+    "lib": [
+      "esnext",
+      "ES2015"
+    ],
   },
-  "include": ["src", "test"],
-  "exclude": ["node_modules", "**/__tests__/*"]
+  "include": [
+    "src",
+    "test"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/__tests__/*"
+  ]
 }

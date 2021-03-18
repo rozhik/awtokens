@@ -32,8 +32,12 @@ export const charTypeCallbacks: TokenizerInit = (addRegexp) => {
   addRegexp(/^[\r\n]/u, { tokenType: "PARA", priority: 0.8 });
 };
 
-export const standardCallbacks: TokenizerInit = (addRegexp, addCallback) => {
-  urlsCallbacks(addRegexp, addCallback);
-  dataCallbacks(addRegexp, addCallback);
-  charTypeCallbacks(addRegexp, addCallback);
+export const standardCallbacks: TokenizerInit = (
+  addRegexp,
+  addCallback,
+  addDict
+) => {
+  urlsCallbacks(addRegexp, addCallback, addDict);
+  dataCallbacks(addRegexp, addCallback, addDict);
+  charTypeCallbacks(addRegexp, addCallback, addDict);
 };

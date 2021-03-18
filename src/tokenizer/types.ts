@@ -31,9 +31,11 @@ export type TokenizerCallback = ExtendedTokenizerCallback;
 
 export type AddRegexp = (reg: RegExp, opts?: IRegexpItem) => void;
 export type AddCallback = (callback: TokenizerCallback) => void;
+export type AddDict = (name: string, dict: Dict) => void;
 export type TokenizerInit = (
   addRegexp: AddRegexp,
-  addCallback: AddCallback
+  addCallback: AddCallback,
+  addDict: AddDict
 ) => void;
 
 // Matcher types

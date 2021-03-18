@@ -149,6 +149,7 @@ export type BestValue = {
   tagIdx?: number;
   val?: string;
   dict?: string;
+  dictOrVal?: string;
 };
 
 export const findBest = (
@@ -170,7 +171,13 @@ export const findBest = (
   const token = tokens[bestTagIdx];
   ret.tagIdx = bestTagIdx;
   ret.val = token.text;
-  ret.dict = token.val && token.val[tag];
+  token.tags?.forEach(t => {
+    if (token.val && !("dict" in ret) && (t in token.val)) {
+      ret.dict = token.val[t];
+    }
+  })
+  // token.val && token.val[tag];
+  ret.dictOrVal = ret.dict || ret.val;
   // eslint-disable-next-line no-param-reassign
   rest.stat[bestTagIdx] = jsonp;
   return ret;

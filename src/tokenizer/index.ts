@@ -150,7 +150,21 @@ export async function tokenize(
         reg: reg || opts.reg,
       });
     },
-    (callback) => callbacks.push(callback)
+    (callback) => callbacks.push(callback),
+    (tag, dict) =>
+      callbacks.push(async (chunk) => {
+        const m = chunk.match(/^[\p{L}][0-9\p{L}\u2070-\u209c]*/u);
+        if (!m || !m[0]) return nullToken;
+        const word = m[0];
+        return word in dict
+          ? {
+            text: word,
+            tags: [tag],
+            tScore: word.length + 0.99,
+            val: { [tag]: dict[word] },
+          }
+          : nullToken;
+      })
   );
   await process();
 

@@ -42,10 +42,12 @@ export type TokenizerInit = (
 export const TAG = "tag";
 export const TEXT = "text";
 export const TEXT_CASE_INSENSITIVE = "text_i_case";
+export const VAL = "val";
 // Do wee need to ckeck apace before/after or datasource
 
 export interface IRulePattern {
-  type: typeof TAG | typeof TEXT | typeof TEXT_CASE_INSENSITIVE;
+  type: typeof TAG | typeof TEXT | typeof TEXT_CASE_INSENSITIVE | typeof VAL;
+  key?: string;
   anyOfVal: string[];
   invert?: boolean;
 }

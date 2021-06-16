@@ -171,11 +171,13 @@ export const findBest = (
   const token = tokens[bestTagIdx];
   ret.tagIdx = bestTagIdx;
   ret.val = token.text;
-  token.tags?.forEach(t => {
-    if (token.val && !("dict" in ret) && (t in token.val)) {
-      ret.dict = token.val[t];
-    }
-  })
+  ret.dict = (token.val && token.val[tag]) || "";
+  // token.tags?.forEach((t) => {
+  //   if (token.val && !("dict" in ret) && t in token.val) {
+  //     ret.dict = token.val[t];
+  //   }
+  // });
+
   // token.val && token.val[tag];
   ret.dictOrVal = ret.dict || ret.val;
   // eslint-disable-next-line no-param-reassign

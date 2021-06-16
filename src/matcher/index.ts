@@ -4,6 +4,7 @@ import {
   IToken,
   TAG,
   TEXT,
+  VAL,
   IRoleAtom,
   IRule,
   IRuleMatch,
@@ -15,6 +16,7 @@ export const amplifiers = {
   exactMatch: 5,
   caseMatch: 3,
   tagMatch: 1,
+  valMatch: 1,
   tokenMatch: 10,
 };
 
@@ -46,6 +48,11 @@ export function getMatchCnt(token: IToken, atom: IRoleAtom): number {
           patt.anyOfVal.filter((val) => itext === val).length *
           amplifiers.caseMatch;
         break;
+      case VAL:
+        partPriority =
+          patt.anyOfVal.filter(
+            (val) => token.val && token.val[patt.key || ""] === val
+          ).length * amplifiers.valMatch;
         break;
       default:
         throw new Error(`Unknown pattern type ${patt.type}`);

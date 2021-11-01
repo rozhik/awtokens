@@ -216,3 +216,23 @@ export const findBestSeq = (
   }
   return ret;
 };
+
+export const findAll = (
+  { matches, range, tokens }: RangeContext,
+  tag: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  jsonp: string
+): string[] => {
+  const ret: string[] = [];
+  let bestTagIdx = -1;
+  for (let i = range.start; i < range.end; i += 1) {
+    if (matches[i]?.setTag === tag) {
+      bestTagIdx = i;
+      const token = tokens[bestTagIdx];
+      const val = (token.val && token.val[tag]) || token.text || "";
+      ret.push(val);
+    }
+  }
+
+  return ret;
+};

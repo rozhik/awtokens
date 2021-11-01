@@ -1,6 +1,6 @@
 {
   "name": "awtokens",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "main": "core/src/index.js",
   "types": "core/src/index.d.ts",
   "description": "AW tokenizer",
@@ -12,7 +12,6 @@
     "test": "NODE_ENV=test nyc mocha",
     "watch-test": "nodemon --exec \"npm test\" --watch src --watch package.json"
   },
-  "dependencies": {},
   "devDependencies": {
     "@types/chai": "^4.2.12",
     "@types/mocha": "^8.2.1",
@@ -23,7 +22,7 @@
     "eslint": "^7.8.0",
     "eslint-config-airbnb-typescript-prettier": "^3.1.0",
     "mocha": "^8.1.3",
-    "mocha-typescript": "^1.1.17",
+    "mocha-typescript": "^1.1.14",
     "nyc": "^15.1.0",
     "prettier": "^2.1.1",
     "source-map-support": "^0.5.19",

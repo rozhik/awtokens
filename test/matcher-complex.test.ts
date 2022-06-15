@@ -1,7 +1,8 @@
+/* eslint-disable import/named */
 import { expect } from "chai";
 // eslint-disable-next-line import/named
 import { tokenize } from "../src/tokenizer/index";
-import { applyRules, IRuleMatch, amplifiers } from "../src/matcher";
+import { applyRules, amplifiers } from "../src/matcher";
 import { standardCallbacks } from "../src/tokenizer/presets";
 import { TAG, IToken, TEXT } from "../src/tokenizer/types";
 

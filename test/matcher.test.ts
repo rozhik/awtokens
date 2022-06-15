@@ -1,12 +1,8 @@
 import { expect } from "chai";
 // eslint-disable-next-line import/named
-import { IToken, tokenize, nullToken } from "../src/tokenizer/index";
 import { isMatch } from "../src/matcher";
 
-const toText = (list: IToken[]): string[] => list.map((item) => item.text);
-
 describe("src/matcher", () => {
-  const simple = "Simple 10st string email@dot.com";
   describe("isMatch", () => {
     it("Anything match empty pattern", () => {
       expect(

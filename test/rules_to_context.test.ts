@@ -1,13 +1,9 @@
+/* eslint-disable import/named */
 import { expect } from "chai";
 // eslint-disable-next-line import/named
 import { IToken, tokenize } from "../src/tokenizer/index";
 import { IRule } from "../src/matcher";
-import {
-  findBest,
-  findTagsRegions,
-  rulesToContext,
-  RangeContext,
-} from "../src/extractor";
+import { rulesToContext, RangeContext } from "../src/extractor";
 
 const parcelSample = `
 1-2 end

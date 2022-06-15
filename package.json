@@ -1,6 +1,6 @@
 {
   "name": "awtokens",
-  "version": "0.2.5",
+  "version": "0.2.8",
   "main": "core/src/index.js",
   "types": "core/src/index.d.ts",
   "description": "AW tokenizer",
@@ -40,5 +40,8 @@
   "bugs": {
     "url": ""
   },
-  "homepage": ""
+  "homepage": "",
+  "dependencies": {
+    "number-format": "^0.1.2"
+  }
 }

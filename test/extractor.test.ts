@@ -1,3 +1,5 @@
+/* eslint-disable no-useless-escape */
+/* eslint-disable import/named */
 import { expect } from "chai";
 // eslint-disable-next-line import/named
 import { IToken, tokenize } from "../src/tokenizer/index";
@@ -209,46 +211,47 @@ const rules: IRule[] = [
   },
 ];
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 function tokensToObject(tokens: IToken[], myRules: IRule[]): Object {
   const range = rulesToContext(tokens, myRules);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const ret: any = range
     ? {
-      origin_iata: findBest(range, "FROM-IATA", "/origin_iata").val,
-      dest_iata: findBest(range, "TO-IATA", "/dest_iata").val,
-      awb_id: findBest(range, "SET-AWB", "/awb_id").val,
-      pieces: findTagsRegions(range, ["P-L", "P-W", "P-H", "P-CNT"])
-        .map((region, idx) => {
-          return {
-            qty:
-              parseInt(
-                findBest(region, "P-CNT", `/pieces/${idx}/qty`).val || "",
-                10
-              ) || 1,
-            leng:
-              parseInt(
-                findBest(region, "P-L", `/pieces/${idx}/leng`).val || "",
-                10
-              ) || 1,
-            width:
-              parseInt(
-                findBest(region, "P-W", `/pieces/${idx}/width`).val || "",
-                10
-              ) || 1,
-            height:
-              parseInt(
-                findBest(region, "P-H", `/pieces/${idx}/height`).val || "",
-                10
-              ) || 1,
-            weight:
-              parseInt(
-                findBest(region, "P-MASS", `/pieces/${idx}/weight`).val || "",
-                10
-              ) || 1,
-          };
-        })
-        .filter((a: any) => a.leng && a.width && a.height),
-    }
+        origin_iata: findBest(range, "FROM-IATA", "/origin_iata").val,
+        dest_iata: findBest(range, "TO-IATA", "/dest_iata").val,
+        awb_id: findBest(range, "SET-AWB", "/awb_id").val,
+        pieces: findTagsRegions(range, ["P-L", "P-W", "P-H", "P-CNT"])
+          .map((region, idx) => {
+            return {
+              qty:
+                parseInt(
+                  findBest(region, "P-CNT", `/pieces/${idx}/qty`).val || "",
+                  10
+                ) || 1,
+              leng:
+                parseInt(
+                  findBest(region, "P-L", `/pieces/${idx}/leng`).val || "",
+                  10
+                ) || 1,
+              width:
+                parseInt(
+                  findBest(region, "P-W", `/pieces/${idx}/width`).val || "",
+                  10
+                ) || 1,
+              height:
+                parseInt(
+                  findBest(region, "P-H", `/pieces/${idx}/height`).val || "",
+                  10
+                ) || 1,
+              weight:
+                parseInt(
+                  findBest(region, "P-MASS", `/pieces/${idx}/weight`).val || "",
+                  10
+                ) || 1,
+            };
+          })
+          .filter((a: any) => a.leng && a.width && a.height),
+      }
     : {};
   return { data: ret, stat: range?.stat };
 }

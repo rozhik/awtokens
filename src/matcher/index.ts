@@ -1,4 +1,3 @@
-import { pathToFileURL } from "url";
 /* eslint-disable import/named */
 import {
   IToken,
@@ -77,7 +76,7 @@ export function applyRule(tokens: IToken[], rule: IRule): IRuleMatch[] {
   let textPeekP = 0;
   let ruleP = 0;
   let i = 0;
-  let curCount = 0;
+  // let curCount = 0;
   let maxIterations = 0;
   let priority = 0;
 
@@ -94,17 +93,17 @@ export function applyRule(tokens: IToken[], rule: IRule): IRuleMatch[] {
     textPeekP = textP;
     return getToken();
   };
-  const peekToken = () => {
-    const token = getToken();
-    textPeekP += 1;
-    return token;
-  };
+  // const peekToken = () => {
+  //   const token = getToken();
+  //   textPeekP += 1;
+  //   return token;
+  // };
 
   const getPattern = () => rule.atoms[ruleP];
   const haveMorePatterns = () => ruleP < rule.atoms.length;
   const nextPattern = () => {
     ruleP += 1;
-    curCount = 0;
+    // curCount = 0;
     return getPattern();
   };
 

@@ -19,6 +19,7 @@ export async function tokenize(
   const callbacks: TokenizerCallback[] = [];
   const tokens: IToken[] = [];
   const windowSize = 80;
+  const defEval = (s: string) => s;
 
   const getBestToken = async (chunk: string, prev: IToken): Promise<IToken> => {
     const matchFilterSort = (list: IToken[]): IToken[] =>
@@ -52,6 +53,7 @@ export async function tokenize(
         }
         const ret: IToken = {
           text: matched,
+          val: { [reg.tokenType || ""]: (reg.evaluate || defEval)(matched) },
           tags: [reg.tokenType || ""],
           tScore: matched.length + (reg.priority || 0),
         };
@@ -74,13 +76,15 @@ export async function tokenize(
       return acc;
     }, []);
 
-    const val = allMatches.reduce(
-      (acc: Dict, tok: IToken): Dict => ({
-        ...(acc || {}),
-        ...(tok.val || {}),
-      }),
-      {}
-    );
+    const val = allMatches.reduce((acc: Dict, tok: IToken): Dict => {
+      if (best.text === tok.text && tok.tags) {
+        return {
+          ...(acc || {}),
+          ...(tok.val || {}),
+        };
+      }
+      return acc;
+    }, {});
     best.tags = tags;
     return {
       ...best,
@@ -158,11 +162,11 @@ export async function tokenize(
         const word = m[0];
         return word in dict
           ? {
-            text: word,
-            tags: [tag],
-            tScore: word.length + 0.99,
-            val: { [tag]: dict[word] },
-          }
+              text: word,
+              tags: [tag],
+              tScore: word.length + 0.99,
+              val: { [tag]: dict[word] },
+            }
           : nullToken;
       })
   );

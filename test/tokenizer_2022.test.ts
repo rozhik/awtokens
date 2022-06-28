@@ -5,8 +5,10 @@ import { IToken, tokenize } from "../src/tokenizer/index";
 import { AddRegexp } from "../src/tokenizer/types";
 
 describe("Tokenizer advanced 2022", () => {
-  function tokenInfoToTokenTagFloat(list: IToken[]): string[][] {
-    const tagVal = "FLOAT";
+  function tokenInfoToTokenTagFloat(
+    list: IToken[],
+    tagVal = "FLOAT"
+  ): string[][] {
     return list.map((item) => [
       item.text,
       (item.val &&
@@ -25,6 +27,11 @@ describe("Tokenizer advanced 2022", () => {
       str.replaceAll(/[.`']/g, "").replace(/[,]/, ".");
     const avoid = /^[,.'`0-9]/;
     addRegexp(/^[0-9]+/, { tokenType: "NUM", priority: 0.8 });
+    addRegexp(/^[0-9]+/, {
+      tokenType: "ODD",
+      priority: 0.9,
+      evaluate: (s) => (parseInt(s, 10) % 2 === 1 ? s : ""),
+    });
     // Integer floats
     addRegexp(/^[0-9]+/, {
       tokenType: "FLOAT",
@@ -137,5 +144,25 @@ describe("Tokenizer advanced 2022", () => {
         // console.log(str, res);
       })
     );
+  });
+  it("Check evaluate filtered", async () => {
+    const str = "o 10 e 11 o 123456 e 12345 o 2 e 1";
+    const res = await tokenize(str, emagicFn);
+    const tp = tokenInfoToTokenTagFloat(res, "ODD");
+    const expected = [
+      ["o", "o", "ALPHA"],
+      ["10", "10", "NUM"],
+      ["e", "e", "ALPHA"],
+      ["11", "11", "ODD"],
+      ["o", "o", "ALPHA"],
+      ["123456", "123456", "NUM"],
+      ["e", "e", "ALPHA"],
+      ["12345", "12345", "ODD"],
+      ["o", "o", "ALPHA"],
+      ["2", "2", "NUM"],
+      ["e", "e", "ALPHA"],
+      ["1", "1", "ODD"],
+    ];
+    expect(tp).be.deep.equal(expected);
   });
 });

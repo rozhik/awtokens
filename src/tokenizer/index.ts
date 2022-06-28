@@ -51,9 +51,11 @@ export async function tokenize(
           const tail = chunk.substring(matched.length);
           if (tail.match(reg.regAvoid)) return nullToken;
         }
+        const evaluated = (reg.evaluate || defEval)(matched);
+        if (reg.evaluate && !evaluated) return nullToken;
         const ret: IToken = {
           text: matched,
-          val: { [reg.tokenType || ""]: (reg.evaluate || defEval)(matched) },
+          val: { [reg.tokenType || ""]: evaluated },
           tags: [reg.tokenType || ""],
           tScore: matched.length + (reg.priority || 0),
         };

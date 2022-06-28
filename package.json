@@ -1,6 +1,6 @@
 {
   "name": "awtokens",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "main": "core/src/index.js",
   "types": "core/src/index.d.ts",
   "description": "AW tokenizer",

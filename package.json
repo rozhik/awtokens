@@ -1,12 +1,12 @@
 {
   "name": "awtokens",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "main": "core/src/index.js",
   "types": "core/src/index.d.ts",
   "description": "AW tokenizer",
   "config": {},
   "scripts": {
-    "clean": "rm -rf ./dist && rm -rf ./test/js",
+    "clean": "rm -rf ./dist && rm -rf ./core && rm -rf ./test/js",
     "compile": "tsc",
     "lint": "eslint src/**/*.ts test/**/*.test.ts",
     "test": "NODE_ENV=test nyc mocha",

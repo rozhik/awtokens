@@ -20,12 +20,25 @@ describe("Tokenizer advanced 2022", () => {
         "",
     ]);
   }
+  function tokenInfoToTokenTagRaw(
+    list: IToken[],
+    tagVal = "FLOAT"
+  ): (string | null)[][] {
+    return list.map((item) => [
+      item.text,
+      (item.val &&
+        (item.val[tagVal] ? `${parseFloat(item.val[tagVal])}` : 0)) ||
+        null,
+      (item.tags && item.tags.includes(tagVal) && tagVal) || null,
+    ]);
+  }
 
   const emagicFn = (addRegexp: AddRegexp) => {
     const dotFloat = (str: string) => str.replaceAll(/[,`'`]/g, "");
     const commaFloat = (str: string) =>
       str.replaceAll(/[.`']/g, "").replace(/[,]/, ".");
     const avoid = /^[,.'`0-9]/;
+    const avoidNumber = /^[0-9]/;
     addRegexp(/^[0-9]+/, { tokenType: "NUM", priority: 0.8 });
     addRegexp(/^[0-9]+/, {
       tokenType: "ODD",
@@ -95,6 +108,31 @@ describe("Tokenizer advanced 2022", () => {
     addRegexp(/^\p{P}+/u, { tokenType: "PUNCT", priority: 0.0 });
     addRegexp(/^\p{S}+/u, { tokenType: "SYMBOL", priority: 0.8 });
     addRegexp(/^[\r\n]/u, { tokenType: "PARA", priority: 0.8 });
+
+    const caas = (str: string): string | null => {
+      const s = str.replaceAll(/[^0-9]/g, "");
+      // if (s.length !== 10) return ""; // Wrong length
+      const s9 = s.substring(0, 10);
+      const s10 = s.substring(10, 11);
+      const par = parseInt(s9, 10) % 7;
+      const match = s10 === `${par}`;
+      console.log(
+        "\n" +
+          `str:[${str}] s: ${s} s9:${s9} s10:${s10} par: ${par} match: ${match} [${
+            s9 + s10
+          }]` +
+          "\n"
+      );
+      return match ? `${s9}${s10}` : null;
+      // return match ? s9 + s10 : "";
+    };
+
+    addRegexp(/^\d\d[\s-]\d\s\d{4,4}[\s\\/]\d{4,4}/u, {
+      tokenType: "CASS",
+      priority: 0.89,
+      evaluate: caas,
+      regAvoid: avoidNumber,
+    });
   };
 
   const dataset = [
@@ -162,6 +200,58 @@ describe("Tokenizer advanced 2022", () => {
       ["2", "2", "NUM"],
       ["e", "e", "ALPHA"],
       ["1", "1", "ODD"],
+    ];
+    expect(tp).be.deep.equal(expected);
+  });
+
+  it("Check evaluate filtered and with correct values", async () => {
+    const str = "o 10 e 11 o 123456 e 12345 o 2 e 1";
+    const res = await tokenize(str, emagicFn);
+
+    const tp = tokenInfoToTokenTagRaw(res, "ODD");
+    const expected = [
+      ["o", null, null],
+      ["10", null, null],
+      ["e", null, null],
+      ["11", "11", "ODD"],
+      ["o", null, null],
+      ["123456", null, null],
+      ["e", null, null],
+      ["12345", "12345", "ODD"],
+      ["o", null, null],
+      ["2", null, null],
+      ["e", null, null],
+      ["1", "1", "ODD"],
+    ];
+    expect(tp).be.deep.equal(expected);
+  });
+
+  it("Check evaluate for CASS format", async () => {
+    const str =
+      "1 22 23-4 7019/4016 23 4 7019 4017 1 23 4 7019/4016 23 4 7019 4016 23 4 7019 40161 523 4 7019 4016";
+    const res = await tokenize(str, emagicFn);
+
+    const tp = tokenInfoToTokenTagRaw(res, "CASS");
+    // console.log("--------", tp);
+    const expected = [
+      ["1", null, null],
+      ["22", null, null],
+      ["23-4 7019/4016", "23470194016", "CASS"],
+      ["23", null, null],
+      ["4", null, null],
+      ["7019", null, null],
+      ["4017", null, null],
+      ["1", null, null],
+      ["23 4 7019/4016", "23470194016", "CASS"],
+      ["23 4 7019 4016", "23470194016", "CASS"],
+      ["23", null, null],
+      ["4", null, null],
+      ["7019", null, null],
+      ["40161", null, null],
+      ["523", null, null],
+      ["4", null, null],
+      ["7019", null, null],
+      ["4016", null, null],
     ];
     expect(tp).be.deep.equal(expected);
   });

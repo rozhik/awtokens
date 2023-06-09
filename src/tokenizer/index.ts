@@ -55,7 +55,7 @@ export async function tokenize(
         if (reg.evaluate && !evaluated) return nullToken;
         const ret: IToken = {
           text: matched,
-          val: { [reg.tokenType || ""]: evaluated },
+          val: { [reg.tokenType || ""]: evaluated || "" },
           tags: [reg.tokenType || ""],
           tScore: matched.length + (reg.priority || 0),
         };

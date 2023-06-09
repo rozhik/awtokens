@@ -12,3 +12,6 @@ npm-debug.log
 .vscode
 build
 core
+
+dist
+.DS_Store

@@ -25,7 +25,7 @@ export const dataCallbacks: TokenizerInit = (addRegexp) => {
 export const charTypeCallbacks: TokenizerInit = (addRegexp) => {
   addRegexp(/^0x[0-9a-fA-F]+/, { tokenType: "HEX", priority: 0.9 });
   addRegexp(/^[0-9]+/, { tokenType: "NUM", priority: 0.8 });
-  addRegexp(/^[0-9]+[\.\,][0-9]+/, { tokenType: "FLOAT", priority: 0.8 });
+  addRegexp(/^[0-9]+[.,][0-9]+/, { tokenType: "FLOAT", priority: 0.8 });
   addRegexp(/^\p{L}+/u, { tokenType: "ALPHA", priority: 0.3 });
   addRegexp(/^[\p{L}][0-9\p{L}]+/u, { tokenType: "ALPHA_NUM", priority: 0 });
   addRegexp(/^\p{P}+/u, { tokenType: "PUNCT", priority: 0.0 });

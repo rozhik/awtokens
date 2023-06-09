@@ -18,7 +18,7 @@ export interface IRegexpItem {
   tokenType?: string;
   priority?: number;
   requiredPrevTag?: string[];
-  evaluate?: (str: string) => string;
+  evaluate?: (str: string) => string | null;
 }
 
 export const nullToken: IToken = { text: "" };
